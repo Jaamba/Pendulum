@@ -10,6 +10,9 @@ constexpr unsigned int width = 800;
 constexpr unsigned int height = 800;
 const std::string title = "Pendulum";
 
+//clock
+sf::Clock _clock;
+
 int main() {
 
 	//creates the window and its settings
@@ -42,6 +45,9 @@ int main() {
 
 	//window loop
 	while (window.isOpen()) {
+		float deltaTime = _clock.getElapsedTime().asSeconds();
+		_clock.restart();
+
 		sf::Event event;
 		while (window.pollEvent(event)) {
 
@@ -65,7 +71,8 @@ int main() {
 		float xVelocity = velocity * cosf(angle);
 		float yVelocity = velocity * sinf(angle);
 
-		pendulum.setPosition(pendulum.getPosition().x + xVelocity * 0.0001, pendulum.getPosition().y + yVelocity * 0.0001);
+		pendulum.setPosition(pendulum.getPosition().x + xVelocity * deltaTime, 
+			pendulum.getPosition().y + yVelocity * deltaTime);
 
 		window.draw(pendulum);
 		window.draw(string);
