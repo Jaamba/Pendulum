@@ -3,11 +3,12 @@
 #include <string>
 
 //constants
-constexpr float PI = 3.14159265f;
+constexpr float PI = 3.141592653589793238462643383279502884f;
 
 //global settings
 constexpr unsigned int width = 800;
 constexpr unsigned int height = 800;
+constexpr unsigned int lineLength = 10;
 const std::string title = "Pendulum";
 
 //clock
@@ -37,14 +38,17 @@ int main() {
 
 	//creates the string
 	sf::RectangleShape string;
-	string.setSize(sf::Vector2f(10, stringLeng));
-	string.setFillColor(sf::Color::White);
+	string.setSize(sf::Vector2f(lineLength, stringLeng));
+	string.setFillColor(sf::Color::Red);
+	string.setOrigin(lineLength / 2, 0);
 	string.setPosition(stringStartPos);
 
 	float velocity = 0;
 
 	//window loop
 	while (window.isOpen()) {
+
+		//calculates the delta time for the frame
 		float deltaTime = _clock.getElapsedTime().asSeconds();
 		_clock.restart();
 
