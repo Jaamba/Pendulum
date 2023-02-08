@@ -19,8 +19,8 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(width,height),title, sf::Style::Close, settings);
 
 	//starting settings
-	const float stringLeng = 100;
-	const float g = 9.8f;
+	const float stringLeng = 500;
+	const float g = -9.8f;
 	const float pendulumRadius = 100;
 	const float pendulumMass = 10;
 	const sf::Vector2f pendulumStartPos = sf::Vector2f(200, 200);
@@ -60,7 +60,16 @@ int main() {
 			pendulum.getPosition().x - string.getPosition().x);
 		string.setRotation(angle*180/PI);
 		
-		//DEBUG: pendulum.setPosition(sf::Mouse::getPosition().x , sf::Mouse::getPosition().y);
+		int h = string.getPosition().y - pendulum.getPosition().y + stringLeng;
+		pendulum.setPosition(sf::Mouse::getPosition().x , sf::Mouse::getPosition().y);
+		
+		float velocitySquared = -2 * g * h;
+		float velocity = sqrtf(velocitySquared);
+
+		float xVelocity = velocity * cosf(angle);
+		float yVelocity = velocity * sinf(angle);
+
+		std::cout << xVelocity << '\n';
 
 		window.draw(pendulum);
 		window.draw(string);
