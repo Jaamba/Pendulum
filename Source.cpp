@@ -22,7 +22,6 @@ int main() {
 	const float stringLeng = 200;
 	const float g = 9.8f;
 	const float pendulumRadius = 50;
-	const float pendulumMass = 10;
 	const sf::Vector2f stringStartPos = sf::Vector2f(500, 200);
 	const sf::Vector2f pendulumStartPos = sf::Vector2f(stringStartPos.x - stringLeng, 200);
 
@@ -59,9 +58,6 @@ int main() {
 			pendulum.getPosition().x - string.getPosition().x);
 		string.setRotation(angle*180/PI);
 		
-		int h = pendulum.getPosition().y- string.getPosition().y;
-		//DEBUG: pendulum.setPosition(sf::Mouse::getPosition().x , sf::Mouse::getPosition().y);
-		
 		float accelleration = g * sinf(angle);
 
 		velocity += accelleration;
@@ -75,7 +71,6 @@ int main() {
 		window.draw(string);
 
 		window.display();
-
 	}
 	return 0;
 }
