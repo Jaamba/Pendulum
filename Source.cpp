@@ -47,19 +47,26 @@ int main() {
 
 			if (event.type == sf::Event::Closed) {
 				window.close();
-			} window.clear();
+			} 
 
-			//physics simulation:
-			float angle = atan2f(pendulum.getPosition().y, pendulum.getPosition().x);
-			string.setRotation(angle);
-
-			pendulum.setPosition(pendulum.getPosition().x + 0.1f, 200);
-
-			window.draw(pendulum);
-			window.draw(string);
 			
-			window.display();
-		}
+			
+		} window.clear();
+
+		//physics simulation:
+
+		//calculates the angle of the string in relation to the pendulum's position
+		float angle = -PI/2 + atan2f(pendulum.getPosition().y - string.getPosition().y , 
+			pendulum.getPosition().x - string.getPosition().x);
+		string.setRotation(angle*180/PI);
+		
+		//DEBUG: pendulum.setPosition(sf::Mouse::getPosition().x , sf::Mouse::getPosition().y);
+
+		window.draw(pendulum);
+		window.draw(string);
+
+		window.display();
+
 	}
 	return 0;
 }
