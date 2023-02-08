@@ -15,6 +15,29 @@ int main() {
 
 	sf::RenderWindow window(sf::VideoMode(width,height),title, sf::Style::Close, settings);
 
+	//starting settings
+	const float stringLeng = 100;
+	const float g = 9.8f;
+	const float pendulumRadius = 100;
+	const float pendulumMass = 10;
+	const sf::Vector2f pendulumStartPos = sf::Vector2f(200, 200);
+	const sf::Vector2f stringStartPos = sf::Vector2f(500, 200);
+
+	//creates the pendulum
+	sf::CircleShape pendulum;
+	pendulum.setFillColor(sf::Color::White);
+	pendulum.setOrigin(pendulumRadius, pendulumRadius);
+	pendulum.setPosition(pendulumStartPos);
+	pendulum.setRadius(pendulumRadius);
+
+	//creates the string
+	sf::RectangleShape string;
+	string.setSize(sf::Vector2f(10, stringLeng));
+	string.setFillColor(sf::Color::White);
+	string.setOrigin(5, 0);
+	string.setPosition(stringStartPos);
+
+
 	//window loop
 	while (window.isOpen()) {
 		sf::Event event;
@@ -23,6 +46,11 @@ int main() {
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			} window.clear();
+
+			window.draw(pendulum);
+			window.draw(string);
+			
+			window.display();
 		}
 	}
 	return 0;
