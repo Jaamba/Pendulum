@@ -2,6 +2,9 @@
 #include <iostream>
 #include <string>
 
+//constants
+constexpr float PI = 3.14159265f;
+
 //global settings
 constexpr unsigned int width = 800;
 constexpr unsigned int height = 800;
@@ -34,7 +37,6 @@ int main() {
 	sf::RectangleShape string;
 	string.setSize(sf::Vector2f(10, stringLeng));
 	string.setFillColor(sf::Color::White);
-	string.setOrigin(5, 0);
 	string.setPosition(stringStartPos);
 
 
@@ -46,6 +48,12 @@ int main() {
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			} window.clear();
+
+			//physics simulation:
+			float angle = atan2f(pendulum.getPosition().y, pendulum.getPosition().x);
+			string.setRotation(angle);
+
+			pendulum.setPosition(pendulum.getPosition().x + 0.1f, 200);
 
 			window.draw(pendulum);
 			window.draw(string);
