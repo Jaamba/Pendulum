@@ -19,12 +19,12 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(width,height),title, sf::Style::Close, settings);
 
 	//starting settings
-	const float stringLeng = 500;
-	const float g = -9.8f;
-	const float pendulumRadius = 100;
+	const float stringLeng = 200;
+	const float g = 9.8f;
+	const float pendulumRadius = 50;
 	const float pendulumMass = 10;
-	const sf::Vector2f pendulumStartPos = sf::Vector2f(200, 200);
 	const sf::Vector2f stringStartPos = sf::Vector2f(500, 200);
+	const sf::Vector2f pendulumStartPos = sf::Vector2f(stringStartPos.x - stringLeng, 200);
 
 	//creates the pendulum
 	sf::CircleShape pendulum;
@@ -39,6 +39,7 @@ int main() {
 	string.setFillColor(sf::Color::White);
 	string.setPosition(stringStartPos);
 
+	float velocity = 0;
 
 	//window loop
 	while (window.isOpen()) {
@@ -49,8 +50,6 @@ int main() {
 				window.close();
 			} 
 
-			
-			
 		} window.clear();
 
 		//physics simulation:
@@ -60,16 +59,17 @@ int main() {
 			pendulum.getPosition().x - string.getPosition().x);
 		string.setRotation(angle*180/PI);
 		
-		int h = string.getPosition().y - pendulum.getPosition().y + stringLeng;
-		pendulum.setPosition(sf::Mouse::getPosition().x , sf::Mouse::getPosition().y);
+		int h = pendulum.getPosition().y- string.getPosition().y;
+		//DEBUG: pendulum.setPosition(sf::Mouse::getPosition().x , sf::Mouse::getPosition().y);
 		
-		float velocitySquared = -2 * g * h;
-		float velocity = sqrtf(velocitySquared);
+		float accelleration = g * sinf(angle);
+
+		velocity += accelleration;
 
 		float xVelocity = velocity * cosf(angle);
 		float yVelocity = velocity * sinf(angle);
 
-		std::cout << xVelocity << '\n';
+		pendulum.setPosition(pendulum.getPosition().x + xVelocity * 0.0001, pendulum.getPosition().y + yVelocity * 0.0001);
 
 		window.draw(pendulum);
 		window.draw(string);
