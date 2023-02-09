@@ -26,7 +26,7 @@ int main() {
 	const int stringThickness = 10;
 	const float g = 9.8f;
 	const int pendulumRadius = 50;
-	const int timeSpeed = 50;
+	const int timeSpeed = 100;
 	const sf::Vector2f stringStartPos = sf::Vector2f(500, 200);
 	const sf::Vector2f pendulumStartPos = sf::Vector2f(stringStartPos.x - stringLeng, 200 + stringThickness/2);
 
@@ -47,9 +47,10 @@ int main() {
 	//keeps track of the pendulum's motion
 	float velocity = 0;
 	float accelleration = 0;
+	float angle = 0;
 
-	//window loop
 	_clock.restart();
+	//window loop
 	while (window.isOpen()) {
 		float deltaTime = _clock.getElapsedTime().asSeconds();
 		_clock.restart();
@@ -66,19 +67,22 @@ int main() {
 		//physics simulation:
 
 		//calculates the angle of the string in relation to the pendulum's position
-		float angle = -PI / 2 + atan2f(pendulum.getPosition().y - string.getPosition().y,
-			pendulum.getPosition().x - string.getPosition().x);
-		string.setRotation(angle * 180 / PI);
+		for (int i = 0; i < timeSpeed; i++) {
 
-	    accelleration = g * sinf(angle);
+			angle = -PI / 2 + atan2f(pendulum.getPosition().y - string.getPosition().y,
+				pendulum.getPosition().x - string.getPosition().x);
+			string.setRotation(angle * 180 / PI);
 
-		velocity += accelleration * deltaTime * timeSpeed;
+			accelleration = g * sinf(angle);
 
-		float xVelocity = velocity * cosf(angle);
-		float yVelocity = velocity * sinf(angle);
+			velocity += accelleration * deltaTime;
 
-		pendulum.setPosition(pendulum.getPosition().x + xVelocity * deltaTime * timeSpeed,
-			pendulum.getPosition().y + yVelocity * deltaTime * timeSpeed);
+			float xVelocity = velocity * cosf(angle);
+			float yVelocity = velocity * sinf(angle);
+
+			pendulum.setPosition(pendulum.getPosition().x + xVelocity * deltaTime,
+				pendulum.getPosition().y + yVelocity * deltaTime);
+		}
 
 		window.draw(pendulum);
 		window.draw(string);
