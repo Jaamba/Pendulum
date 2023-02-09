@@ -3,12 +3,11 @@
 #include <string>
 
 //constants
-constexpr float PI = 3.141592653589793238462643383279502884f;
+constexpr float PI = 3.14159265f;
 
 //global settings
 constexpr unsigned int width = 800;
 constexpr unsigned int height = 800;
-constexpr unsigned int lineLength = 10;
 const std::string title = "Pendulum";
 
 //clock
@@ -20,14 +19,16 @@ int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 
-	sf::RenderWindow window(sf::VideoMode(width,height),title, sf::Style::Close, settings);
+	sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Close, settings);
 
 	//starting settings
-	const float stringLeng = 200;
+	const int stringLeng = 200;
+	const int stringThickness = 10;
 	const float g = 9.8f;
-	const float pendulumRadius = 50;
+	const int pendulumRadius = 50;
+	const int timeSpeed = 50;
 	const sf::Vector2f stringStartPos = sf::Vector2f(500, 200);
-	const sf::Vector2f pendulumStartPos = sf::Vector2f(stringStartPos.x - stringLeng, 200);
+	const sf::Vector2f pendulumStartPos = sf::Vector2f(stringStartPos.x - stringLeng, 200 + stringThickness/2);
 
 	//creates the pendulum
 	sf::CircleShape pendulum;
@@ -38,17 +39,18 @@ int main() {
 
 	//creates the string
 	sf::RectangleShape string;
-	string.setSize(sf::Vector2f(lineLength, stringLeng));
-	string.setFillColor(sf::Color::Red);
-	string.setOrigin(lineLength / 2, 0);
+	string.setSize(sf::Vector2f(stringThickness, stringLeng));
+	string.setOrigin(stringThickness / 2, 0);
+	string.setFillColor(sf::Color::White);
 	string.setPosition(stringStartPos);
 
+	//keeps track of the pendulum's motion
 	float velocity = 0;
+	float accelleration = 0;
 
 	//window loop
+	_clock.restart();
 	while (window.isOpen()) {
-
-		//calculates the delta time for the frame
 		float deltaTime = _clock.getElapsedTime().asSeconds();
 		_clock.restart();
 
@@ -57,31 +59,32 @@ int main() {
 
 			if (event.type == sf::Event::Closed) {
 				window.close();
-			} 
+			}
 
 		} window.clear();
 
 		//physics simulation:
 
 		//calculates the angle of the string in relation to the pendulum's position
-		float angle = -PI/2 + atan2f(pendulum.getPosition().y - string.getPosition().y , 
+		float angle = -PI / 2 + atan2f(pendulum.getPosition().y - string.getPosition().y,
 			pendulum.getPosition().x - string.getPosition().x);
-		string.setRotation(angle*180/PI);
-		
-		float accelleration = g * sinf(angle);
+		string.setRotation(angle * 180 / PI);
 
-		velocity += accelleration;
+	    accelleration = g * sinf(angle);
+
+		velocity += accelleration * deltaTime * timeSpeed;
 
 		float xVelocity = velocity * cosf(angle);
 		float yVelocity = velocity * sinf(angle);
 
-		pendulum.setPosition(pendulum.getPosition().x + xVelocity * deltaTime, 
-			pendulum.getPosition().y + yVelocity * deltaTime);
+		pendulum.setPosition(pendulum.getPosition().x + xVelocity * deltaTime * timeSpeed,
+			pendulum.getPosition().y + yVelocity * deltaTime * timeSpeed);
 
 		window.draw(pendulum);
 		window.draw(string);
 
 		window.display();
 	}
+
 	return 0;
 }
