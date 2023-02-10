@@ -9,8 +9,8 @@ private:
 	const size_t centerRad{};
 	const float max{};
 	const float min{};
-	const int* pointingVar{};
-	int pos{};
+	int* const pointingVar{};
+	float pos{};
 
 	//graphical elements:
 	sf::RectangleShape rect;
@@ -49,7 +49,7 @@ public:
 		setPosition(xPos, yPos);
 	}
 
-	void update();
+	void update(const sf::RenderWindow& window);
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
