@@ -132,8 +132,11 @@ public:
 				if (pos > 0.99) pos = 1;
 				else if (pos < 0.01) pos = 0;
 
-				if(T)
-				*pointingVar = roundf(max*pos - min*(pos - 1));
+				//only rounds if T is an integral type
+				if constexpr (std::is_integral_v<T>)
+					*pointingVar = roundf(max*pos - min*(pos - 1));
+				else
+					*pointingVar = (max * pos - min * (pos - 1));
 			}
 		}
 
