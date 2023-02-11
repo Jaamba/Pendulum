@@ -113,7 +113,7 @@ public:
 				if (pos > 0.99) pos = 1;
 				else if (pos < 0.01) pos = 0;
 
-				*pointingVar = max*pos - min*(pos - 1);
+				*pointingVar = roundf(max*pos - min*(pos - 1));
 			}
 		}
 
