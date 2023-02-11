@@ -27,7 +27,6 @@ private:
 	sf::RectangleShape rect;
 	sf::CircleShape center;
 
-	
 
 public:
 	//disabled default constructor (it doesn't make sense to create an
@@ -45,6 +44,8 @@ public:
 		min{ _min },
 		pointingVar{ _pointingVar }
 	{
+		setOrigin(0, height / 2);
+
 		//argument checking
 		if (_width <= 0 || _height <= 0 || centerRad <= 0) 
 			throw std::invalid_argument("width, height, and radius must be more than 0");
@@ -79,7 +80,7 @@ public:
 	}
 
 	//actually draws the slider
-	virtual void Slider::draw(sf::RenderTarget& target, sf::RenderStates states) const override {
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
 		states.transform *= getTransform();
 
 		target.draw(rect, states);
@@ -97,10 +98,6 @@ public:
 			throw std::exception("error: not valid type for Slider");
 		}
 
-		//sets the position to the limits if it overflows/underflows
-		if (pos > 1) pos = 1;
-		else if (pos < 0) pos = 0;
-
 		//gets the bound area of the slider
 		sf::FloatRect boundArea = getTransform().transformRect(rect.getLocalBounds());
 
@@ -110,8 +107,13 @@ public:
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
 
 				//recalculates pos and pointingVar
-				pos = (mousePos.x - getPosition().x) / width;
-				*pointingVar = pos * max + min;
+				pos = sqrtf(powf((mousePos.x - getPosition().x) , 2) + powf((mousePos.y - getPosition().y), 2))/ width;
+
+				//sets the position to the limits if it overflows/underflows
+				if (pos > 0.99) pos = 1;
+				else if (pos < 0.01) pos = 0;
+
+				*pointingVar = max*pos - min*(pos - 1);
 			}
 		}
 
