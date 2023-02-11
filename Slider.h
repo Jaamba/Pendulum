@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <exception>
 #include <array>
+#include <type_traits>
 
 //Slider class that generates a slide which can be positioned and rotated.
 //A Slider can be drawn via the function window.draw(slider), but must first
@@ -34,7 +35,7 @@ public:
 	
 	//base constructor: always called by other constructors
 	Slider(float _max, float _min, T* _pointingVar, 
-			float _width, float _height, float _centerRad ) :
+			float _width, float _height, float _centerRad) :
 		//members assignemnt
 		width{ _width },
 		height{ _height },
@@ -56,20 +57,27 @@ public:
 			throw std::invalid_argument("var must be between min and max");
 
 		//setup of the graphical interface
+		//colors:
 		//light grey color:
 		rect.setFillColor(sf::Color(69, 90, 100));
 		//dark grey color:
 		rect.setOutlineColor(sf::Color(38, 50, 56));
-		rect.setOutlineThickness(12);
+
+		rect.setOutlineThickness(_width/26);
+
 		rect.setSize(sf::Vector2f(width, height));
 		center.setRadius(centerRad);
 		center.setOrigin(centerRad / 2, centerRad / 2);
-		center.setFillColor(sf::Color::Red);
+
+		//very light grey color:
+		center.setFillColor(sf::Color(120, 144, 156));
+		center.setOutlineThickness(_centerRad / 8);
+		center.setOutlineColor(sf::Color::Blue);
 	}
 
 	//constructor override that also takes the starting position as a vector2
-	Slider(float _max, float _min, 
-		T* _pointingVar, const sf::Vector2f& _screenPos, float _width, float _height, float _centerRad) :
+	Slider(float _max, float _min, T* _pointingVar, 
+		const sf::Vector2f& _screenPos, float _width, float _height, float _centerRad) :
 		Slider(_max, _min, _pointingVar, _width, _height, _centerRad)
 	{
 		setPosition(_screenPos);
@@ -80,6 +88,14 @@ public:
 		Slider(_max, _min, _pointingVar, _width, _height, _centerRad)
 	{
 		setPosition(xPos, yPos);
+	}
+
+	//constructor override that creates a Slider with default proportions
+	Slider(float _max, float _min, T* _pointingVar,
+		float _width, const sf::Vector2f& _screenPos = sf::Vector2f(0, 0)) :
+		Slider(_max, _min, _pointingVar,_screenPos, _width, 5, 7) {
+	
+		rect.setOutlineThickness(4);
 	}
 
 	//actually draws the slider
@@ -116,6 +132,7 @@ public:
 				if (pos > 0.99) pos = 1;
 				else if (pos < 0.01) pos = 0;
 
+				if(T)
 				*pointingVar = roundf(max*pos - min*(pos - 1));
 			}
 		}
