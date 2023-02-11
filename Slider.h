@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <exception>
-#include <type_traits>
+#include <array>
 
 //Slider class that generates a slide which can be positioned and rotated.
 //A Slider can be drawn via the function window.draw(slider), but must first
@@ -27,15 +27,14 @@ private:
 	sf::RectangleShape rect;
 	sf::CircleShape center;
 
-
 public:
 	//disabled default constructor (it doesn't make sense to create an
 	//empty slider)
 	Slider() = delete;
 	
 	//base constructor: always called by other constructors
-	Slider(float _width, float _height, float _centerRad, float _max, 
-		float _min, T* _pointingVar) :
+	Slider(float _max, float _min, T* _pointingVar, 
+			float _width, float _height, float _centerRad ) :
 		//members assignemnt
 		width{ _width },
 		height{ _height },
@@ -57,7 +56,11 @@ public:
 			throw std::invalid_argument("var must be between min and max");
 
 		//setup of the graphical interface
-		rect.setFillColor(sf::Color::White);
+		//light grey color:
+		rect.setFillColor(sf::Color(69, 90, 100));
+		//dark grey color:
+		rect.setOutlineColor(sf::Color(38, 50, 56));
+		rect.setOutlineThickness(12);
 		rect.setSize(sf::Vector2f(width, height));
 		center.setRadius(centerRad);
 		center.setOrigin(centerRad / 2, centerRad / 2);
@@ -65,16 +68,16 @@ public:
 	}
 
 	//constructor override that also takes the starting position as a vector2
-	Slider(float _width, float _height , float _centerRad, float _max, float _min, 
-		T* _pointingVar, const sf::Vector2f& _screenPos) :
-		Slider(_width, _height, _centerRad, _max, _min, _pointingVar)
+	Slider(float _max, float _min, 
+		T* _pointingVar, const sf::Vector2f& _screenPos, float _width, float _height, float _centerRad) :
+		Slider(_max, _min, _pointingVar, _width, _height, _centerRad)
 	{
 		setPosition(_screenPos);
 	}
 	//constructor override that takes the starting pos as two floats
-	Slider(float _width, float _height, float _centerRad, float _max, float _min,
-		T* _pointingVar, float xPos, float yPos) :
-		Slider(_width, _height, _centerRad, _max, _min, _pointingVar)
+	Slider(float _max, float _min,
+		T* _pointingVar, float xPos, float yPos, float _width, float _height, float _centerRad) :
+		Slider(_max, _min, _pointingVar, _width, _height, _centerRad)
 	{
 		setPosition(xPos, yPos);
 	}
