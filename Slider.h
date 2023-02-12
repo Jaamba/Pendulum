@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <exception>
+#include <sstream>
 #include <array>
 #include <type_traits>
 
@@ -23,10 +24,14 @@ private:
 	const float min{};
 	T* const pointingVar{};
 	float pos{};
+	bool showLabel{ true };
 
 	//graphical elements:
 	sf::RectangleShape rect;
 	sf::CircleShape center;
+	sf::Font font;
+	sf::Text label;
+	std::string labelText;
 
 public:
 	//disabled default constructor (it doesn't make sense to create an
@@ -35,14 +40,15 @@ public:
 	
 	//base constructor: always called by other constructors
 	Slider(float _max, float _min, T* _pointingVar, 
-			float _width, float _height, float _centerRad) :
+			float _width, float _height, float _centerRad, const std::string& title = "var") :
 		//members assignemnt
 		width{ _width },
 		height{ _height },
 		centerRad{ _centerRad },
 		max{ _max },
 		min{ _min },
-		pointingVar{ _pointingVar }
+		pointingVar{ _pointingVar },
+		labelText{ title }
 	{
 		setOrigin(0, height / 2);
 
@@ -73,27 +79,35 @@ public:
 		center.setFillColor(sf::Color(120, 144, 156));
 		center.setOutlineThickness(_centerRad / 8);
 		center.setOutlineColor(sf::Color::Blue);
+
+		//sets the font and the text
+		font.loadFromFile("fonts/Arial.ttf");
+		label.setFont(font);
+		label.setCharacterSize(3*height);
+		label.setFillColor(sf::Color::White);
+		label.setString("Hello");
+		label.setPosition(0, -height - rect.getOutlineThickness());
 	}
 
 	//constructor override that also takes the starting position as a vector2
 	Slider(float _max, float _min, T* _pointingVar, 
-		const sf::Vector2f& _screenPos, float _width, float _height, float _centerRad) :
-		Slider(_max, _min, _pointingVar, _width, _height, _centerRad)
+		const sf::Vector2f& _screenPos, float _width, float _height, float _centerRad, const std::string& title = "var") :
+		Slider(_max, _min, _pointingVar, _width, _height, _centerRad, title)
 	{
 		setPosition(_screenPos);
 	}
 	//constructor override that takes the starting pos as two floats
 	Slider(float _max, float _min,
-		T* _pointingVar, float xPos, float yPos, float _width, float _height, float _centerRad) :
-		Slider(_max, _min, _pointingVar, _width, _height, _centerRad)
+		T* _pointingVar, float xPos, float yPos, float _width, float _height, float _centerRad, const std::string& title = "var") :
+		Slider(_max, _min, _pointingVar, _width, _height, _centerRad, title)
 	{
 		setPosition(xPos, yPos);
 	}
 
 	//constructor override that creates a Slider with default proportions
 	Slider(float _max, float _min, T* _pointingVar,
-		float _width, const sf::Vector2f& _screenPos = sf::Vector2f(0, 0)) :
-		Slider(_max, _min, _pointingVar,_screenPos, _width, 5, 7) {
+		float _width, const sf::Vector2f& _screenPos = sf::Vector2f(0, 0), const std::string& title = "var") :
+		Slider(_max, _min, _pointingVar,_screenPos, _width, 5, 7, title) {
 	
 		rect.setOutlineThickness(4);
 	}
@@ -104,6 +118,7 @@ public:
 
 		target.draw(rect, states);
 		target.draw(center, states);
+		target.draw(label, states);
 	}
 
 	//updates the slider on a window
@@ -133,15 +148,24 @@ public:
 				else if (pos < 0.01) pos = 0;
 
 				//only rounds if T is an integral type
-				if constexpr (std::is_integral_v<T>)
+				if (std::is_integral_v<T>)
 					*pointingVar = roundf(max*pos - min*(pos - 1));
 				else
 					*pointingVar = (max * pos - min * (pos - 1));
 			}
 		}
 
-		//sets the new position
+		//sets the new positiston
 		center.setPosition(sf::Vector2f(pos * width - centerRad / 2, height / 2 - centerRad / 2));
+
+		//resets the string of the label:
+		std::stringstream toAppend;
+		toAppend << *pointingVar;
+
+		if (showLabel)
+			label.setString(labelText + ": " + toAppend.str());
+		else
+			label.setString("");
 	}
 
 	//getters
@@ -153,5 +177,9 @@ public:
 	}
 	const int getCenterRad() const {
 		return centerRad;
+	}
+
+	void isLabelled(bool b) {
+		showLabel = b;
 	}
 };
