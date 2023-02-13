@@ -17,6 +17,7 @@ class Slider : public sf::Drawable, public sf::Transformable {
 private:
 
 	//QUESTO è UN ESPERIMENTO!!!
+	//Questo è un altro esperimento :)))
 	
 	//private members:
 	const float width{};
