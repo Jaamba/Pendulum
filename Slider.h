@@ -15,6 +15,8 @@
 template<typename T>
 class Slider : public sf::Drawable, public sf::Transformable {
 private:
+
+	//QUESTO è UN ESPERIMENTO!!!
 	
 	//private members:
 	const float width{};
