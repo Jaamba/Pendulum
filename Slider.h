@@ -72,7 +72,7 @@ public:
 		//dark grey color:
 		rect.setOutlineColor(sf::Color(38, 50, 56));
 
-		rect.setOutlineThickness(_width/26);
+		rect.setOutlineThickness(_height/10);
 
 		rect.setSize(sf::Vector2f(width, height));
 		center.setRadius(centerRad);
@@ -88,8 +88,7 @@ public:
 		label.setFont(font);
 		label.setCharacterSize(3*height);
 		label.setFillColor(sf::Color::White);
-		label.setString("Hello");
-		label.setPosition(0, -height - rect.getOutlineThickness());
+		label.setPosition(0, - rect.getOutlineThickness());
 	}
 
 	//constructor override that also takes the starting position as a vector2
