@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
+#include "Slider.h"
 
 //constants
 constexpr float PI = 3.14159265f;
@@ -22,13 +23,18 @@ int main() {
 	sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Close, settings);
 
 	//starting settings
-	const int stringLeng = 200;
+	int stringLeng = 200;
 	const int stringThickness = 10;
-	const float g = 9.8f;
-	const int pendulumRadius = 50;
-	const int timeSpeed = 100;
+	float g = 9.8f;
+	int pendulumRadius = 50;
+	unsigned int timeSpeed = 100;
 	const sf::Vector2f stringStartPos = sf::Vector2f(500, 200);
 	const sf::Vector2f pendulumStartPos = sf::Vector2f(stringStartPos.x - stringLeng, 200 + stringThickness/2);
+
+	//UI:
+	//Sliders:
+	Slider<float> gSlider(30, -10, &g, 150, sf::Vector2f(50, 100), "g");
+	Slider<unsigned int> timeSpeedSlider(500, 0, &timeSpeed, 150, sf::Vector2f(50, 150), "TimeSpeed");
 
 	//creates the pendulum
 	sf::CircleShape pendulum;
@@ -86,6 +92,12 @@ int main() {
 
 		window.draw(pendulum);
 		window.draw(string);
+
+		//draws and updates UI
+		gSlider.update(window);
+		window.draw(gSlider);
+		timeSpeedSlider.update(window);
+		window.draw(timeSpeedSlider);
 
 		window.display();
 	}
