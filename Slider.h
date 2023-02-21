@@ -39,11 +39,6 @@ private:
 	const sf::Color WHITE{ sf::Color::White };
 	const sf::Color BLUE{ sf::Color::Blue };
 
-public:
-	//disabled default constructor (it doesn't make sense to create an
-	//empty slider)
-	Slider() = delete;
-	
 	//constructs the graphics of a slider 
 	void constructGraphics() {
 
@@ -65,9 +60,14 @@ public:
 		label.setCharacterSize(labelSize);
 		label.setOrigin(0, labelSize);
 		label.setFillColor(WHITE);
-		label.setPosition(0, - rect.getOutlineThickness());
+		label.setPosition(0, -rect.getOutlineThickness());
 	}
 
+public:
+	//disabled default constructor (it doesn't make sense to create an
+	//empty slider)
+	Slider() = delete;
+	
 	//base constructor: always called by other constructors
 	Slider(float _max, float _min, T* _pointingVar, 
 			float _width, float _height, float _centerRad, const std::string& title = "var") :
