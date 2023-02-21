@@ -16,9 +16,6 @@ template<typename T>
 class Slider : public sf::Drawable, public sf::Transformable {
 private:
 
-	//QUESTO è UN ESPERIMENTO!!!
-	//Questo è un altro esperimento :)))
-	
 	//private members:
 	const float width{};
 	const float height{};
@@ -35,12 +32,42 @@ private:
 	sf::Font font;
 	sf::Text label;
 	std::string labelText;
+	size_t labelSize{ 12 };
+	const sf::Color LIGHT_GREY{ 69, 90, 100 };
+	const sf::Color LIGHT_GREY2{ 120, 144, 156 };
+	const sf::Color DARK_GREY{ 38, 50, 56 };
+	const sf::Color WHITE{ sf::Color::White };
+	const sf::Color BLUE{ sf::Color::Blue };
 
 public:
 	//disabled default constructor (it doesn't make sense to create an
 	//empty slider)
 	Slider() = delete;
 	
+	//constructs the graphics of a slider 
+	void constructGraphics() {
+
+		//setup of the graphical interface
+		//colors:
+		rect.setFillColor(LIGHT_GREY);
+		rect.setOutlineColor(DARK_GREY);
+		center.setFillColor(LIGHT_GREY2);
+		center.setOutlineColor(BLUE);
+
+		//sizes:
+		rect.setSize(sf::Vector2f(width, height));
+		rect.setOutlineThickness(height / 10);
+		center.setRadius(centerRad);
+		center.setOrigin(centerRad / 2, centerRad / 2);
+		center.setOutlineThickness(centerRad / 8);
+
+		//label:
+		label.setCharacterSize(labelSize);
+		label.setOrigin(0, labelSize);
+		label.setFillColor(WHITE);
+		label.setPosition(0, - rect.getOutlineThickness());
+	}
+
 	//base constructor: always called by other constructors
 	Slider(float _max, float _min, T* _pointingVar, 
 			float _width, float _height, float _centerRad, const std::string& title = "var") :
@@ -65,42 +92,26 @@ public:
 		if (*_pointingVar > _max || *_pointingVar < _min) 
 			throw std::invalid_argument("var must be between min and max");
 
-		//setup of the graphical interface
-		//colors:
-		//light grey color:
-		rect.setFillColor(sf::Color(69, 90, 100));
-		//dark grey color:
-		rect.setOutlineColor(sf::Color(38, 50, 56));
-
-		rect.setOutlineThickness(_height/10);
-
-		rect.setSize(sf::Vector2f(width, height));
-		center.setRadius(centerRad);
-		center.setOrigin(centerRad / 2, centerRad / 2);
-
-		//very light grey color:
-		center.setFillColor(sf::Color(120, 144, 156));
-		center.setOutlineThickness(_centerRad / 8);
-		center.setOutlineColor(sf::Color::Blue);
-
 		//sets the font and the text
 		font.loadFromFile("fonts/Arial.ttf");
 		label.setFont(font);
-		label.setCharacterSize(3*height);
-		label.setFillColor(sf::Color::White);
-		label.setPosition(0, - rect.getOutlineThickness());
+
+		//constructs the graphics of the slider
+		constructGraphics();
 	}
 
 	//constructor override that also takes the starting position as a vector2
 	Slider(float _max, float _min, T* _pointingVar, 
 		const sf::Vector2f& _screenPos, float _width, float _height, float _centerRad, const std::string& title = "var") :
+
 		Slider(_max, _min, _pointingVar, _width, _height, _centerRad, title)
 	{
 		setPosition(_screenPos);
 	}
+	
 	//constructor override that takes the starting pos as two floats
-	Slider(float _max, float _min,
-		T* _pointingVar, float xPos, float yPos, float _width, float _height, float _centerRad, const std::string& title = "var") :
+	Slider(float _max, float _min, T* _pointingVar, 
+		float xPos, float yPos, float _width, float _height, float _centerRad, const std::string& title = "var") :
 		Slider(_max, _min, _pointingVar, _width, _height, _centerRad, title)
 	{
 		setPosition(xPos, yPos);
@@ -111,8 +122,8 @@ public:
 		float _width, const sf::Vector2f& _screenPos = sf::Vector2f(0, 0), const std::string& title = "var") :
 		Slider(_max, _min, _pointingVar,_screenPos, _width, 5, 7, title) {
 	
-		rect.setOutlineThickness(4);
 	}
+
 
 	//actually draws the slider
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override {
@@ -181,7 +192,13 @@ public:
 		return centerRad;
 	}
 
+	//setters
 	void isLabelled(bool b) {
 		showLabel = b;
+	}
+	void setLabelSize(size_t size) {
+		labelSize = size;
+		label.setCharacterSize(size);
+		label.setOrigin(0, size);
 	}
 };
