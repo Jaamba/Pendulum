@@ -11,6 +11,7 @@ Sprites/
 *.json
 *.exe
 *.o
+*.vscode
 
 # User-specific files
 *.rsuser
