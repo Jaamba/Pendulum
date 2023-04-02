@@ -12,6 +12,7 @@ Sprites/
 *.exe
 *.o
 *.vscode
+imgui/
 
 # User-specific files
 *.rsuser

@@ -4,6 +4,9 @@
 #include <math.h>
 #include "Slider.h"
 
+#include "imgui.h"
+#include "imgui-SFML.h"
+
 //constants
 constexpr float PI = 3.14159265f;
 
@@ -23,6 +26,9 @@ int main() {
 
 	sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Close, settings);
 
+    //initializes IMGui window
+    ImGui::SFML::Init(window);
+
 	//starting settings
 	int stringLeng = 200;
 	const int stringThickness = 10;
@@ -31,11 +37,6 @@ int main() {
 	unsigned int timeSpeed = 100;
 	const sf::Vector2f stringStartPos = sf::Vector2f(500, 200);
 	const sf::Vector2f pendulumStartPos = sf::Vector2f(stringStartPos.x - stringLeng, 200 + stringThickness/2);
-
-	//UI:
-	//Sliders:
-	Slider<float> gSlider(30, -10, &g, 150, sf::Vector2f(50, 100), "g");
-	Slider<unsigned int> timeSpeedSlider(500, 0, &timeSpeed, 150, sf::Vector2f(50, 150), "TimeSpeed");
 
 	//creates the pendulum
 	sf::CircleShape pendulum;
@@ -60,16 +61,17 @@ int main() {
 	//window loop
 	while (window.isOpen()) {
 		float deltaTime = _clock.getElapsedTime().asSeconds();
-		_clock.restart();
 
 		sf::Event event;
 		while (window.pollEvent(event)) {
-
+            
+            ImGui::SFML::ProcessEvent(event);
 			if (event.type == sf::Event::Closed) {
 				window.close();
 			}
 
 		} window.clear();
+        ImGui::SFML::Update(window, _clock.restart());
 
 		//physics simulation:
 
@@ -93,15 +95,11 @@ int main() {
 
 		window.draw(pendulum);
 		window.draw(string);
-
-		//draws and updates UI
-		gSlider.update(window);
-		window.draw(gSlider);
-		timeSpeedSlider.update(window);
-		window.draw(timeSpeedSlider);
+        ImGui::SFML::Render(window);
 
 		window.display();
 	}
 
+    ImGui::SFML::Shutdown();
 	return 0;
 }
