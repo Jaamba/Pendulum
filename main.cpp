@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <math.h>
-#include "Slider.h"
 
 #include "imgui.h"
 #include "imgui-SFML.h"
@@ -37,6 +36,8 @@ int main() {
 	unsigned int timeSpeed = 100;
 	const sf::Vector2f stringStartPos = sf::Vector2f(500, 200);
 	const sf::Vector2f pendulumStartPos = sf::Vector2f(stringStartPos.x - stringLeng, 200 + stringThickness/2);
+    float stringColor[3] = {0.0f, 0.0f, 0.0f};
+    float pendulumColor[3] = {0.0f, 0.0f, 0.0f};
 
 	//creates the pendulum
 	sf::CircleShape pendulum;
@@ -73,6 +74,21 @@ int main() {
 		} window.clear();
         ImGui::SFML::Update(window, _clock.restart());
 
+        //Imgui interface
+        ImGui::Begin("Window");
+        ImGui::SliderInt("TimeSpeed", (int*)&timeSpeed, 0, 1000);
+        ImGui::ColorEdit3("String Color", stringColor);
+        ImGui::ColorEdit3("Pendulum Color", pendulumColor);
+        string.setFillColor(sf::Color(
+            (int)(stringColor[0] * 255),
+            (int)(stringColor[1] * 255),
+            (int)(stringColor[2] * 255)));
+        pendulum.setFillColor(sf::Color(
+            (int)(pendulumColor[0] * 255),
+            (int)(pendulumColor[1] * 255),
+            (int)(pendulumColor[2] * 255)));
+        ImGui::End();
+
 		//physics simulation:
 
 		//calculates the angle of the string in relation to the pendulum's position
@@ -93,8 +109,8 @@ int main() {
 				pendulum.getPosition().y + yVelocity * deltaTime);
 		}
 
-		window.draw(pendulum);
 		window.draw(string);
+		window.draw(pendulum);
         ImGui::SFML::Render(window);
 
 		window.display();
