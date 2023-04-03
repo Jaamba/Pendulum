@@ -33,15 +33,14 @@ int main() {
 	const int stringThickness = 10;
 	float g = 9.8f;
 	int pendulumRadius = 50;
-	unsigned int timeSpeed = 100;
+	unsigned int timeSpeed = 20;
 	const sf::Vector2f stringStartPos = sf::Vector2f(500, 200);
 	const sf::Vector2f pendulumStartPos = sf::Vector2f(stringStartPos.x - stringLeng, 200 + stringThickness/2);
-    float stringColor[3] = {0.0f, 0.0f, 0.0f};
-    float pendulumColor[3] = {0.0f, 0.0f, 0.0f};
+    float stringColor[3] = {1.0f, 1.0f, 1.0f};
+    float pendulumColor[3] = {1.0f, 1.0f, 1.0f};
 
 	//creates the pendulum
 	sf::CircleShape pendulum;
-	pendulum.setFillColor(sf::Color::White);
 	pendulum.setOrigin(pendulumRadius, pendulumRadius);
 	pendulum.setPosition(pendulumStartPos);
 	pendulum.setRadius(pendulumRadius);
@@ -50,7 +49,6 @@ int main() {
 	sf::RectangleShape string;
 	string.setSize(sf::Vector2f(stringThickness, stringLeng));
 	string.setOrigin(stringThickness / 2, 0);
-	string.setFillColor(sf::Color::White);
 	string.setPosition(stringStartPos);
 
 	//keeps track of the pendulum's motion
@@ -111,6 +109,7 @@ int main() {
 
 		window.draw(string);
 		window.draw(pendulum);
+		
         ImGui::SFML::Render(window);
 
 		window.display();
