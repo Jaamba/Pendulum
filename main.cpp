@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
 #include <math.h>
 
 #include "imgui.h"
@@ -25,16 +26,17 @@ int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 8;
 
-	sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Close, settings);
+	sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Default, settings);
 
     //initializes IMGui window
     ImGui::SFML::Init(window);
 
 	//starting settings
 	float g = 9.8f;
-	unsigned int timeSpeed = 20;
+	unsigned int timeSpeed = 5;
 
-	Pendulum pend(400, 10 , 200, 100, sf::Color(100,100,100));
+	//example pendulum
+	Pendulum pend(100, 20, sf::Vector2f(100, 100));
 
 	_clock.restart();
 	//window loop
@@ -53,28 +55,15 @@ int main() {
         ImGui::SFML::Update(window, _clock.restart());
 
         //Imgui interface 
-		/*
         ImGui::Begin("Window");
         ImGui::SliderInt("TimeSpeed", (int*)&timeSpeed, 0, 1000);
-        ImGui::ColorEdit3("String Color", stringColor);
-        ImGui::ColorEdit3("Pendulum Color", pendulumColor);
-        string.setFillColor(sf::Color(
-            (int)(stringColor[0] * 255),
-            (int)(stringColor[1] * 255),
-            (int)(stringColor[2] * 255)));
-        pendulum.setFillColor(sf::Color(
-            (int)(pendulumColor[0] * 255),
-            (int)(pendulumColor[1] * 255),
-            (int)(pendulumColor[2] * 255)));
+        ImGui::SliderFloat("g", &g, -50, 50);
         ImGui::End();
-		*/
-
-
-		pend.processPhysics(timeSpeed, deltaTime, g);
-		window.draw(pend);
-		pend.updateColors();
 
         ImGui::SFML::Render(window);
+		
+		window.draw(pend);
+		pend.processPhysics(timeSpeed, deltaTime, g);
 		
 		window.display();
 	}
