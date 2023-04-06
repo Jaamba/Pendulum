@@ -27,10 +27,16 @@ int main() {
 	settings.antialiasingLevel = 8;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Default, settings);
-	sf::View view = window.getDefaultView();
 
     //initializes IMGui window
     ImGui::SFML::Init(window);
+
+	//window parameters
+	sf::View view = window.getDefaultView();
+	bool isMouseDragging = false;
+	sf::Vector2i lastMousePosition;
+	sf::Vector2f lastViewPosition;
+	sf::Vector2i deltaMouse;
 
 	//starting settings
 	float g = 9.8f;
@@ -62,6 +68,27 @@ int main() {
 		} window.clear();
         ImGui::SFML::Update(window, _clock.restart());
 
+		//updates the isMouseDragging state
+		if(sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && !isMouseDragging) {
+			isMouseDragging = true;
+			lastMousePosition = sf::Mouse::getPosition(window);
+			lastViewPosition = view.getCenter();
+		}
+		else if(!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+			isMouseDragging = false;
+		}
+
+		if(isMouseDragging) {
+			//updates the change in the mouse position
+			deltaMouse = sf::Vector2i(sf::Mouse::getPosition(window).x - lastMousePosition.x, 
+				sf::Mouse::getPosition(window).y - lastMousePosition.y);
+			
+			//updates the view
+			sf::Vector2f center = view.getCenter();
+			view.setCenter(lastViewPosition.x - deltaMouse.x, lastViewPosition.y - deltaMouse.y);
+			window.setView(view);
+		}
+
         //Imgui interface 
         ImGui::Begin("Window");
         ImGui::SliderInt("TimeSpeed", (int*)&timeSpeed, 0, 1000);
@@ -70,6 +97,7 @@ int main() {
 
         ImGui::SFML::Render(window);
 		
+		std::cout << isMouseDragging;
 		window.draw(pend);
 		pend.processPhysics(timeSpeed, deltaTime, g);
 		
