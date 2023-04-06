@@ -27,6 +27,7 @@ int main() {
 	settings.antialiasingLevel = 8;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), title, sf::Style::Default, settings);
+	sf::View view = window.getDefaultView();
 
     //initializes IMGui window
     ImGui::SFML::Init(window);
@@ -49,6 +50,13 @@ int main() {
             ImGui::SFML::ProcessEvent(event);
 			if (event.type == sf::Event::Closed) {
 				window.close();
+			}
+
+			if(event.type == sf::Event::Resized) {
+				
+				//resizes the view together with the window
+				sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+        		window.setView(sf::View(visibleArea));		
 			}
 
 		} window.clear();
