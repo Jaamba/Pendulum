@@ -9,9 +9,6 @@
 
 #include "pendulum.h"
 
-//constants
-constexpr float PI = 3.14159265f;
-
 //global settings
 constexpr unsigned int width = 800;
 constexpr unsigned int height = 800;
@@ -37,13 +34,16 @@ int main() {
 	sf::Vector2i lastMousePosition;
 	sf::Vector2f lastViewPosition;
 	sf::Vector2i deltaMouse;
+	bool canCreatePendulum = false;
+	float stringLength = 1;
+	float radius = 1;
+
+	//list of pendulums
+	std::vector<Pendulum> pendulums;
 
 	//starting settings
 	float g = 9.8f;
 	unsigned int timeSpeed = 5;
-
-	//example pendulum
-	Pendulum pend(100, 20, sf::Vector2f(100, 100));
 
 	_clock.restart();
 	//window loop
@@ -90,16 +90,44 @@ int main() {
 		}
 
         //Imgui interface 
-        ImGui::Begin("Window");
+        ImGui::Begin("Settings");
         ImGui::SliderInt("TimeSpeed", (int*)&timeSpeed, 0, 1000);
         ImGui::SliderFloat("g", &g, -50, 50);
         ImGui::End();
 
+		//pendulum creation interface
+		ImGui::Begin("PendulumCreation");
+		ImGui::SliderFloat("String Length", &stringLength, 1, 300);
+		ImGui::SliderFloat("Radius", &radius, 1, 200);
+		if(ImGui::Button("Create Pendulum")) canCreatePendulum = true;
+		ImGui::End();
+		
+		//pendulum creation
+		if(canCreatePendulum && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+			view = window.getView();
+			float left = view.getCenter().x - view.getSize().x/2;
+			float top = view.getCenter().y - view.getSize().y/2;
+			
+			sf::Vector2f drawingPosition = sf::Vector2f((left + sf::Mouse::getPosition(window).x)/2, 
+				(top+ sf::Mouse::getPosition(window).y)/2);
+
+				
+			pendulums.push_back(Pendulum(stringLength, radius, drawingPosition));
+
+			canCreatePendulum = false;
+		}
+
+
+		//draws the pendulums
+		for(Pendulum& p : pendulums) {
+			p.processPhysics(timeSpeed, deltaTime, g);
+			p.updateColors();
+			window.draw(p);
+		}
+
         ImGui::SFML::Render(window);
 		
-		std::cout << isMouseDragging;
-		window.draw(pend);
-		pend.processPhysics(timeSpeed, deltaTime, g);
+		
 		
 		window.display();
 	}
