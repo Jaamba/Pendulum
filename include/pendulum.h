@@ -44,8 +44,8 @@ class Pendulum : public sf::Transformable,  public sf::Drawable {
 
 	        //creates the string
             _string.setSize(sf::Vector2f(_stringThickness, _stringLeng));
-            _string.setOrigin(_stringThickness / 2, 0);
 	        _string.setPosition(startPosition);
+            _string.setOrigin(_stringThickness / 2, 0);
         }
 
         Pendulum(size_t stringLength, size_t centreRadius, float xstartPosition, float ystartPosition, 
